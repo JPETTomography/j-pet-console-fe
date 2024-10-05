@@ -1,3 +1,5 @@
+import { CONTACT_MAIL } from "../../const";
+
 const Login = () => {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
@@ -39,7 +41,7 @@ const Login = () => {
                 className="p-4 rounded border border-slate-300 group-hover/input:border-sky-700 focus:outline-sky-700 text-slate-800 transition-colors duration-300"
               />
               <a
-                href="/"
+                href={`mailto:${CONTACT_MAIL}`}
                 className="max-w-max ml-auto text-xs text-slate-700 hover:text-slate-900 hover:underline focus:outline-offset-4 transition-colors duration-300"
               >
                 Forgot password
@@ -57,7 +59,7 @@ const Login = () => {
             <br />
             Please contact with our{" "}
             <a
-              href="/"
+              href={`mailto:${CONTACT_MAIL}`}
               className="text-sky-600 hover:text-sky-800 font-semibold focus:outline-offset-4 transition-colors duration-300"
             >
               administration
