@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  @apply p-0 m-0 font-inter text-slate-800;
+}
+
+h1 {
+  @apply m-0 text-4xl font-semibold;
+}
+
+h2 {
+  @apply m-0 text-xl font-medium;
+}
