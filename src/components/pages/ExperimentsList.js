@@ -4,9 +4,9 @@ import ExperimentCard from "../partials/ExperimentCard";
 
 const ExperimentsList = () => {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col gap-8 p-6">
       <h1>Experiments List</h1>
-      <ul>
+      <ul className="list-none grid gap-4">
         {experiments.map((experiment, index) => {
           return (
             <li key={index}>
