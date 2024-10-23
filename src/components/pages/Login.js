@@ -1,5 +1,7 @@
 import { CONTACT_MAIL } from "../../const";
 
+import PasswordInput from "../partials/PasswordInput";
+
 const Login = () => {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
@@ -27,19 +29,9 @@ const Login = () => {
                 className="p-4 rounded border border-slate-300 group-hover/input:border-sky-700 focus:outline-sky-700 text-slate-800 transition-colors duration-300"
               />
             </div>
-            <div className="grid gap-2 focus-within:text-sky-700 group/input">
-              <label
-                for="password"
-                className="max-w-max hover:text-sky-700 transition-colors duration-300"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="p-4 rounded border border-slate-300 group-hover/input:border-sky-700 focus:outline-sky-700 text-slate-800 transition-colors duration-300"
-              />
+            <div className="grid gap-2">
+              <PasswordInput />
+
               <a
                 href={`mailto:${CONTACT_MAIL}`}
                 className="max-w-max ml-auto text-xs text-slate-700 hover:text-slate-900 hover:underline focus:outline-offset-4 transition-colors duration-300"
