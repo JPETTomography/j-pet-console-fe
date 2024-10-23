@@ -1,3 +1,5 @@
+import Svg from "./Svg";
+
 const ExperimentCard = (props) => {
   const {
     id,
@@ -37,15 +39,32 @@ const ExperimentCard = (props) => {
         </div>
         <div className="flex justify-between gap-4">
           <p>{description}</p>
-          {duration && <div className="text-red-700 font-bold">DURATION</div>}
+          {duration && (
+            <div className="flex items-center gap-2 text-sm">
+              <Svg src="icons/calendar-days.svg" className="w-6 h-6" />
+              <span className="text-red-700 font-bold">DURATION</span>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex justify-between gap-4 pt-2">
-        <span>{place}</span>
-        <span>{coordinator}</span>
+        <div className="flex items-center gap-2 text-sm">
+          <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
+          {place}
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <Svg src="icons/user-circle.svg" className="w-6 h-6" />
+          {coordinator}
+        </div>
         <div className="flex gap-4">
-          <span>Calibration</span>
-          <span>Software version</span>
+          <span className="flex items-center gap-2 text-sm">
+            <Svg src="icons/viewfinder-circle.svg" className="w-6 h-6" />
+            Calibration
+          </span>
+          <div className="flex items-center gap-2 text-sm">
+            <Svg src="icons/window.svg" className="w-6 h-6" />
+            Software version
+          </div>
         </div>
       </div>
     </a>

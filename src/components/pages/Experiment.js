@@ -2,6 +2,8 @@ import { experiments } from "../../data/experiments";
 
 import { useParams } from "react-router-dom";
 
+import Svg from "../partials/Svg";
+
 const Experiment = () => {
   const { experiment_id } = useParams();
   const experiment = experiments.find((experiment) => {
@@ -12,8 +14,9 @@ const Experiment = () => {
     <div className="min-h-screen flex flex-col gap-8 p-6">
       <a
         href="/experiments"
-        className="flex gap-4 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
+        className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
       >
+        <Svg src="/icons/arrow-left.svg" className="w-5 h-5" />
         <span>Back to experiments list</span>
       </a>
       <div className="flex flex-col gap-2">
@@ -39,15 +42,24 @@ const Experiment = () => {
         <div className="flex justify-between gap-4">
           <p className="text-xl">{experiment.description}</p>
           {experiment.duration && (
-            <div className="text-red-700 font-bold">DURATION</div>
+            <div className="flex items-center gap-2 text-sm">
+              <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
+              <span className="text-red-700 font-bold">DURATION</span>
+            </div>
           )}
         </div>
-        <div className="text-sm">{experiment.place}</div>
+        <div className="flex items-center gap-2 text-sm">
+          <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
+          {experiment.place}
+        </div>
       </div>
       {experiment.critical && (
-        <div className="p-6 rounded-2xl bg-rose-50 text-lg text-rose-700">
-          <p className="font-bold">{experiment.critical.title}</p>
-          <p>{experiment.critical.description}</p>
+        <div className="flex gap-3 p-6 rounded-2xl bg-rose-50 text-lg text-rose-700">
+          <Svg src="/icons/x-circle.svg" className="w-7 h-7" />
+          <div>
+            <p className="font-bold">{experiment.critical.title}</p>
+            <p>{experiment.critical.description}</p>
+          </div>
         </div>
       )}
     </div>
