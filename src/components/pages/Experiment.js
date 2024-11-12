@@ -3,7 +3,12 @@ import { useParams } from "react-router-dom";
 
 import { formatDate } from "../../utils/formatDate";
 
+// eslint-disable-next-line
+import Chart from "chart.js/auto"; // must have, although not used
+import { Line } from "react-chartjs-2";
 import Svg from "../partials/Svg";
+
+import data from "../../data/bar_line.json";
 
 const Experiment = () => {
   const { experiment_id } = useParams();
@@ -95,6 +100,26 @@ const Experiment = () => {
               </div>
             </div>
           )}
+          <div className="grid lg:grid-cols-2 gap-4">
+            <div className="flex justify-center h-80">
+              <Line
+                data={{
+                  labels: data.x,
+                  datasets: [
+                    {
+                      type: "bar",
+                      label: "Measurement",
+                      data: data.y,
+                    },
+                    {
+                      label: "Reference",
+                      data: data.y,
+                    },
+                  ],
+                }}
+              />
+            </div>
+          </div>
         </>
       )}
     </div>
