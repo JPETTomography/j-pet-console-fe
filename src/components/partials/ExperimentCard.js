@@ -1,15 +1,18 @@
+import { formatDate } from "../../utils/formatDate";
+
 import Svg from "./Svg";
 
 const ExperimentCard = (props) => {
   const {
-    id,
+    status,
     name,
+    id,
     description,
-    coordinator,
-    place,
-    state,
+    start_date,
+    end_date,
+    owner,
     critical,
-    duration,
+    place,
   } = props;
 
   return (
@@ -28,23 +31,24 @@ const ExperimentCard = (props) => {
             )}
             <div
               className={`rounded py-0.5 px-2.5 border ${
-                state === "ongoing"
+                status === "ongoing"
                   ? "bg-sky-200 border-sky-300 text-sky-800"
                   : "bg-slate-600 border-slate-600 text-white"
               } capitalize`}
             >
-              {state}
+              {status}
             </div>
           </div>
         </div>
         <div className="flex justify-between gap-4">
           <p>{description}</p>
-          {duration && (
-            <div className="flex items-center gap-2 text-sm">
-              <Svg src="icons/calendar-days.svg" className="w-6 h-6" />
-              <span className="text-red-700 font-bold">DURATION</span>
-            </div>
-          )}
+          <div className="shrink-0 flex items-center gap-2 text-sm">
+            <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
+            <span className="font-bold">
+              {formatDate(start_date)} -{" "}
+              {end_date ? formatDate(end_date) : "..."}
+            </span>
+          </div>
         </div>
       </div>
       <div className="flex justify-between gap-4 pt-2">
@@ -53,16 +57,16 @@ const ExperimentCard = (props) => {
           {place}
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <Svg src="icons/user-circle.svg" className="w-6 h-6" />
-          {coordinator}
+          <Svg src="/icons/user-circle.svg" className="w-6 h-6" />
+          {owner.name}
         </div>
         <div className="flex gap-4">
           <span className="flex items-center gap-2 text-sm">
-            <Svg src="icons/viewfinder-circle.svg" className="w-6 h-6" />
+            <Svg src="/icons/viewfinder-circle.svg" className="w-6 h-6" />
             Calibration
           </span>
           <div className="flex items-center gap-2 text-sm">
-            <Svg src="icons/window.svg" className="w-6 h-6" />
+            <Svg src="/icons/window.svg" className="w-6 h-6" />
             Software version
           </div>
         </div>
