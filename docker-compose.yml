@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Map React's development server
+    volumes:
+      - .:/app       # Mount code for live reload
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_SOURCE=http://localhost:8000 # Set API endpoint
+    command: ["npm", "start"] # Explicitly run npm
