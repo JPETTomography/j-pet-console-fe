@@ -9,6 +9,7 @@ import { Line } from "react-chartjs-2";
 import Svg from "../partials/Svg";
 
 import data from "../../data/bar_line.json";
+import Badge from "../partials/Badge";
 
 const Experiment = () => {
   const { experiment_id } = useParams();
@@ -58,25 +59,12 @@ const Experiment = () => {
             <div className="flex justify-between items-center gap-4">
               <h1>{experiment.name}</h1>
               <div className="flex gap-4">
-                {experiment.critical && (
-                  <div className="rounded py-0.5 px-2.5 bg-rose-50 border border-rose-200 text-rose-700 capitalize">
-                    critical
-                  </div>
-                )}
-                <div
-                  className={`rounded py-0.5 px-2.5 border ${
-                    experiment.status === "ongoing"
-                      ? "bg-sky-200 border-sky-300 text-sky-800"
-                      : "bg-slate-600 border-slate-600 text-white"
-                  } capitalize`}
-                >
-                  {experiment.status}
-                </div>
+                <Badge status={experiment.status} />
               </div>
             </div>
             <div className="flex justify-between gap-4">
               <p className="text-xl">{experiment.description}</p>
-              <div className="shrink-0 flex gap-2 text-sm">
+              <div className="shrink-0 flex items-center gap-2 mb-auto text-sm">
                 <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
                 <span>
                   {formatDate(experiment.start_date)} -{" "}
@@ -86,20 +74,13 @@ const Experiment = () => {
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
-              {experiment.place}
-            </div>
-          </div>
-          {experiment.critical && (
-            <div className="flex gap-3 p-6 rounded-2xl bg-rose-50 text-lg text-rose-700">
-              <Svg src="/icons/x-circle.svg" className="w-7 h-7" />
-              <div>
-                <p className="font-bold">{experiment.critical.title}</p>
-                <p>{experiment.critical.description}</p>
+            <div className="grid grid-rows-1 grid-flow-col gap-4 pt-2">
+              <div className="flex items-center gap-2 text-sm">
+                <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
+                {experiment.location}
               </div>
             </div>
-          )}
+          </div>
           <div className="grid lg:grid-cols-2 gap-4">
             <div className="flex justify-center h-80">
               <Line
