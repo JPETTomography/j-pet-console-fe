@@ -38,7 +38,7 @@ const ExperimentCard = (props) => {
           </div>
         </div>
       </div>
-      <div className="grid grid-rows-1 grid-flow-col gap-4 pt-2">
+      <div className="grid grid-cols-2 gap-4 pt-2">
         <div className="flex items-center gap-2 text-sm">
           <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
           {location}

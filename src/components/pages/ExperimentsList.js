@@ -8,7 +8,7 @@ const ExperimentsList = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchExperiments = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_SOURCE}/experiments`
@@ -26,7 +26,7 @@ const ExperimentsList = () => {
       }
     };
 
-    fetchUsers();
+    fetchExperiments();
   }, []);
 
   return (
