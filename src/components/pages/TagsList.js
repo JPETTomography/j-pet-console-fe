@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import TagCard from "../partials/TagCard";
+import Page from "../partials/Page";
 
 const TagsList = () => {
   const [tags, setTags] = useState([]);
@@ -30,7 +31,7 @@ const TagsList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <h1>Tags List</h1>
       {loading ? (
         <p>Loading...</p>
@@ -47,7 +48,7 @@ const TagsList = () => {
           })}
         </ul>
       )}
-    </div>
+    </Page>
   );
 };
 

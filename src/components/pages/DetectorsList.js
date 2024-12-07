@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import DetectorCard from "../partials/DetectorCard";
 
+import Page from "../partials/Page";
+
 const DetectorsList = () => {
   const [detectors, setDetectors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ const DetectorsList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <h1>Detectors List</h1>
       {loading ? (
         <p>Loading...</p>
@@ -47,7 +49,7 @@ const DetectorsList = () => {
           })}
         </ul>
       )}
-    </div>
+    </Page>
   );
 };
 

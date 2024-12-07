@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import ExperimentCard from "../partials/ExperimentCard";
 
+import Page from "../partials/Page";
+
 const ExperimentsList = () => {
   const [experiments, setExperiments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ const ExperimentsList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <h1>Experiments List</h1>
       {loading ? (
         <p>Loading...</p>
@@ -47,7 +49,7 @@ const ExperimentsList = () => {
           })}
         </ul>
       )}
-    </div>
+    </Page>
   );
 };
 

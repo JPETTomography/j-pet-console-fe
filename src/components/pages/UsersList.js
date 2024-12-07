@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import UserCard from "../partials/UserCard";
 
+import Page from "../partials/Page";
+
 const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ const UsersList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <h1>Users List</h1>
       {loading ? (
         <p>Loading...</p>
@@ -47,7 +49,7 @@ const UsersList = () => {
           })}
         </ul>
       )}
-    </div>
+    </Page>
   );
 };
 

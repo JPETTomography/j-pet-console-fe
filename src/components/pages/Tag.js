@@ -5,6 +5,8 @@ import Svg from "../partials/Svg";
 
 import Badge from "../partials/Badge";
 
+import Page from "../partials/Page";
+
 const Experiment = () => {
   const { tag_id } = useParams();
 
@@ -35,7 +37,7 @@ const Experiment = () => {
   }, [tag_id]);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <a
         href="/tags"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
@@ -62,7 +64,7 @@ const Experiment = () => {
           </div>
         </>
       )}
-    </div>
+    </Page>
   );
 };
 

@@ -5,6 +5,8 @@ import Svg from "../partials/Svg";
 
 import Badge from "../partials/Badge";
 
+import Page from "../partials/Page";
+
 const Detector = () => {
   const { detector_id } = useParams();
 
@@ -35,7 +37,7 @@ const Detector = () => {
   }, [detector_id]);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <a
         href="/detectors"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
@@ -68,7 +70,7 @@ const Detector = () => {
           </div>
         </>
       )}
-    </div>
+    </Page>
   );
 };
 

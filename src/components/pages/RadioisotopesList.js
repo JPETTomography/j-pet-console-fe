@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import RadioisotopeCard from "../partials/RadioisotopeCard";
 
+import Page from "../partials/Page";
+
 const RadioisotopesList = () => {
   const [radioisotopes, setRadioisotopes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ const RadioisotopesList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 p-6">
+    <Page>
       <h1>Radioisotopes List</h1>
       {loading ? (
         <p>Loading...</p>
@@ -47,7 +49,7 @@ const RadioisotopesList = () => {
           })}
         </ul>
       )}
-    </div>
+    </Page>
   );
 };
 
