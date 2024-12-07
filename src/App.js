@@ -10,6 +10,8 @@ import Tag from "./components/pages/Tag";
 import RadioisotopesList from "./components/pages/RadioisotopesList";
 import Radioisotope from "./components/pages/Radioisotope";
 import NotFound from "./components/pages/NotFound";
+import UsersList from "./components/pages/UsersList";
+import User from "./components/pages/User";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
           path="/radioisotopes/:radioisotope_id"
           element={<Radioisotope />}
         />
+        <Route path="/users" element={<UsersList />} />
+        <Route path="/users/:user_id" element={<User />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
