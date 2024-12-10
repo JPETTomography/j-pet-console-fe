@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import Svg from "../partials/Svg";
 
-import Badge from "../partials/Badge";
+import Tag from "../partials/Tag";
 
 import Page from "../partials/Page";
 
@@ -59,7 +59,7 @@ const Experiment = () => {
             <div className="flex justify-between items-center gap-4">
               <h1>{tag.name}</h1>
               <div className="flex gap-4">
-                <Badge status={tag.name} />
+                <Tag name={tag.name} color={tag.color} />
               </div>
             </div>
             <div className="flex justify-between gap-4">

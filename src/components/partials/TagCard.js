@@ -1,7 +1,7 @@
-import Badge from "./Badge";
+import Tag from "./Tag";
 
 const ExperimentCard = (props) => {
-  const { id, name, description } = props;
+  const { id, name, description, color } = props;
 
   return (
     <a
@@ -12,7 +12,7 @@ const ExperimentCard = (props) => {
         <div className="flex justify-between gap-4">
           <h2>{name}</h2>
           <div className="flex gap-4">
-            <Badge status={name} />
+            <Tag name={name} color={color} />
           </div>
         </div>
         <div className="flex justify-between gap-4">
