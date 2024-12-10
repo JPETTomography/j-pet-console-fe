@@ -48,7 +48,7 @@ const Page = (props) => {
           />
         </button>
       </header>
-      <main className="flex flex-col gap-8 min-h-screen max-w-screen-2xl p-6 mx-auto">
+      <main className="flex-1 flex flex-col gap-8 w-full max-w-screen-2xl p-6 mx-auto">
         {children}
       </main>
     </>
