@@ -31,7 +31,7 @@ const ExperimentCard = (props) => {
           <p>{description}</p>
           <div className="shrink-0 flex items-center gap-2 mb-auto text-sm">
             <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
-            <span className="font-bold">
+            <span>
               {formatDate(start_date)} -{" "}
               {end_date ? formatDate(end_date) : "..."}
             </span>
