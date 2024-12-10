@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import Svg from "../partials/Svg";
@@ -7,34 +7,38 @@ import Badge from "../partials/Badge";
 
 import Page from "../partials/Page";
 
+import FetchLoading from "../partials/FetchLoading";
+import FetchError from "../partials/FetchError";
+
 const Detector = () => {
   const { detector_id } = useParams();
 
   const [detector, setDetector] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const fetchDetector = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_SOURCE}/detectors/${detector_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch detector");
+      }
+      const data = await response.json();
+      setDetector(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [detector_id]);
 
   useEffect(() => {
-    const fetchDetector = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/detectors/${detector_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch detector");
-        }
-        const data = await response.json();
-        setDetector(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDetector();
-  }, [detector_id]);
+  }, [fetchDetector, detector_id]);
 
   return (
     <Page>
@@ -46,9 +50,9 @@ const Detector = () => {
         <span>Back to detectors list</span>
       </a>
       {loading ? (
-        <p>Loading...</p>
+        <FetchLoading />
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <FetchError error={error} fetchFun={fetchDetector} />
       ) : (
         <>
           <div className="flex flex-col gap-2">

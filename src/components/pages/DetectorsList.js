@@ -4,30 +4,34 @@ import DetectorCard from "../partials/DetectorCard";
 
 import Page from "../partials/Page";
 
+import FetchLoading from "../partials/FetchLoading";
+import FetchError from "../partials/FetchError";
+
 const DetectorsList = () => {
   const [detectors, setDetectors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDetectors = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/detectors`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch detectors");
-        }
-        const data = await response.json();
-        setDetectors(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchDetectors = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_SOURCE}/detectors`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch detectors");
       }
-    };
+      const data = await response.json();
+      setDetectors(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchDetectors();
   }, []);
 
@@ -35,9 +39,9 @@ const DetectorsList = () => {
     <Page>
       <h1>Detectors List</h1>
       {loading ? (
-        <p>Loading...</p>
+        <FetchLoading />
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <FetchError error={error} fetchFun={fetchDetectors} />
       ) : (
         <ul className="list-none grid gap-4">
           {detectors.map((detector, index) => {

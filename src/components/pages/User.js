@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import Svg from "../partials/Svg";
@@ -7,6 +7,9 @@ import Badge from "../partials/Badge";
 
 import Page from "../partials/Page";
 
+import FetchLoading from "../partials/FetchLoading";
+import FetchError from "../partials/FetchError";
+
 const Experiment = () => {
   const { user_id } = useParams();
 
@@ -14,27 +17,28 @@ const Experiment = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/users/${user_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch user");
-        }
-        const data = await response.json();
-        setExperiment(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchUser = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_SOURCE}/users/${user_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch user");
       }
-    };
-
-    fetchUser();
+      const data = await response.json();
+      setExperiment(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [user_id]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser, user_id]);
 
   return (
     <Page>
@@ -46,9 +50,9 @@ const Experiment = () => {
         <span>Back to users list</span>
       </a>
       {loading ? (
-        <p>Loading...</p>
+        <FetchLoading />
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <FetchError error={error} fetchFun={fetchUser} />
       ) : (
         <>
           <div className="flex flex-col gap-2">

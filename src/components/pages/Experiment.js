@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import { formatDate } from "../../utils/formatDate";
@@ -13,6 +13,9 @@ import Badge from "../partials/Badge";
 
 import Page from "../partials/Page";
 
+import FetchLoading from "../partials/FetchLoading";
+import FetchError from "../partials/FetchError";
+
 const Experiment = () => {
   const { experiment_id } = useParams();
 
@@ -20,27 +23,28 @@ const Experiment = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchExperiment = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/experiments/${experiment_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch experiment");
-        }
-        const data = await response.json();
-        setExperiment(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchExperiment = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_SOURCE}/experiments/${experiment_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch experiment");
       }
-    };
-
-    fetchExperiment();
+      const data = await response.json();
+      setExperiment(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [experiment_id]);
+
+  useEffect(() => {
+    fetchExperiment();
+  }, [fetchExperiment, experiment_id]);
 
   return (
     <Page>
@@ -52,9 +56,9 @@ const Experiment = () => {
         <span>Back to experiments list</span>
       </a>
       {loading ? (
-        <p>Loading...</p>
+        <FetchLoading />
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <FetchError error={error} fetchFun={fetchExperiment} />
       ) : (
         <>
           <div className="flex flex-col gap-2">

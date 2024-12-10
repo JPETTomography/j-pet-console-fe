@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import Svg from "../partials/Svg";
 
 import Page from "../partials/Page";
+
+import FetchLoading from "../partials/FetchLoading";
+import FetchError from "../partials/FetchError";
 
 const Radioisotope = () => {
   const { radioisotope_id } = useParams();
@@ -12,27 +15,28 @@ const Radioisotope = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchRadioisotope = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/radioisotopes/${radioisotope_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch radioisotope");
-        }
-        const data = await response.json();
-        setRadioisotope(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchRadioisotope = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_SOURCE}/radioisotopes/${radioisotope_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch radioisotope");
       }
-    };
-
-    fetchRadioisotope();
+      const data = await response.json();
+      setRadioisotope(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [radioisotope_id]);
+
+  useEffect(() => {
+    fetchRadioisotope();
+  }, [fetchRadioisotope, radioisotope_id]);
 
   return (
     <Page>
@@ -44,9 +48,9 @@ const Radioisotope = () => {
         <span>Back to radioisotopes list</span>
       </a>
       {loading ? (
-        <p>Loading...</p>
+        <FetchLoading />
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <FetchError error={error} fetchFun={fetchRadioisotope} />
       ) : (
         <>
           <div className="flex flex-col gap-2">
