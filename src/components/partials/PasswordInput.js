@@ -6,7 +6,7 @@ const PasswordInput = () => {
   return (
     <div className="grid gap-2 focus-within:text-sky-700 group/input">
       <label
-        for="password"
+        htmlFor="password"
         className="max-w-max hover:text-sky-700 transition-colors duration-300"
       >
         Password
