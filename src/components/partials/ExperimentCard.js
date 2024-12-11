@@ -31,14 +31,14 @@ const ExperimentCard = (props) => {
           <p>{description}</p>
           <div className="shrink-0 flex items-center gap-2 mb-auto text-sm">
             <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
-            <span className="font-bold">
+            <span>
               {formatDate(start_date)} -{" "}
               {end_date ? formatDate(end_date) : "..."}
             </span>
           </div>
         </div>
       </div>
-      <div className="grid grid-rows-1 grid-flow-col gap-4 pt-2">
+      <div className="grid grid-cols-2 gap-4 pt-2">
         <div className="flex items-center gap-2 text-sm">
           <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
           {location}

@@ -17,7 +17,7 @@ const Login = () => {
           <form className="grid gap-8">
             <div className="grid gap-2 focus-within:text-sky-700 group/input">
               <label
-                for="login"
+                htmlFor="login"
                 className="max-w-max hover:text-sky-700 transition-colors duration-300"
               >
                 Login
