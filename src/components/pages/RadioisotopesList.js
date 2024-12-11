@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import RadioisotopeCard from "../partials/RadioisotopeCard";
 
 import Page from "../partials/Page";
+import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -43,15 +44,10 @@ const RadioisotopesList = () => {
       ) : error ? (
         <FetchError error={error} fetchFun={fetchRadioisotopes} />
       ) : (
-        <ul className="list-none grid gap-4">
-          {radioisotopes.map((radioisotope, index) => {
-            return (
-              <li key={index}>
-                <RadioisotopeCard {...radioisotope} />
-              </li>
-            );
-          })}
-        </ul>
+        <PaginatedItems
+          items={radioisotopes}
+          ItemComponent={RadioisotopeCard}
+        />
       )}
     </Page>
   );

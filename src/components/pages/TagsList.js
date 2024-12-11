@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import TagCard from "../partials/TagCard";
 import Page from "../partials/Page";
+import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -40,15 +41,7 @@ const TagsList = () => {
       ) : error ? (
         <FetchError error={error} fetchFun={fetchTags} />
       ) : (
-        <ul className="list-none grid gap-4">
-          {tags.map((tag, index) => {
-            return (
-              <li key={index}>
-                <TagCard {...tag} />
-              </li>
-            );
-          })}
-        </ul>
+        <PaginatedItems items={tags} ItemComponent={TagCard} />
       )}
     </Page>
   );

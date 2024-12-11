@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import UserCard from "../partials/UserCard";
 
 import Page from "../partials/Page";
+import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -41,15 +42,7 @@ const UsersList = () => {
       ) : error ? (
         <FetchError error={error} fetchFun={fetchUsers} />
       ) : (
-        <ul className="list-none grid gap-4">
-          {users.map((user, index) => {
-            return (
-              <li key={index}>
-                <UserCard {...user} />
-              </li>
-            );
-          })}
-        </ul>
+        <PaginatedItems items={users} ItemComponent={UserCard} />
       )}
     </Page>
   );

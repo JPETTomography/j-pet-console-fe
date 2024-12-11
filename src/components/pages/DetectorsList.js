@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import DetectorCard from "../partials/DetectorCard";
 
 import Page from "../partials/Page";
+import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -43,15 +44,7 @@ const DetectorsList = () => {
       ) : error ? (
         <FetchError error={error} fetchFun={fetchDetectors} />
       ) : (
-        <ul className="list-none grid gap-4">
-          {detectors.map((detector, index) => {
-            return (
-              <li key={index}>
-                <DetectorCard {...detector} />
-              </li>
-            );
-          })}
-        </ul>
+        <PaginatedItems items={detectors} ItemComponent={DetectorCard} />
       )}
     </Page>
   );
