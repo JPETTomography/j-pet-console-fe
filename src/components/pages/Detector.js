@@ -16,7 +16,7 @@ const Detector = () => {
   const [detector, setDetector] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const fetchDetector = useCallback(async () => {
     setLoading(true);
     setError(null);

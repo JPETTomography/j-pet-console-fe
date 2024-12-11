@@ -15,9 +15,7 @@ const TagsList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/tags`
-      );
+      const response = await fetch(`${process.env.REACT_APP_API_SOURCE}/tags`);
       if (!response.ok) {
         throw new Error("Failed to fetch tags");
       }

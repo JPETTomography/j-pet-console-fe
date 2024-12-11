@@ -16,9 +16,7 @@ const UsersList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/users`
-      );
+      const response = await fetch(`${process.env.REACT_APP_API_SOURCE}/users`);
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }

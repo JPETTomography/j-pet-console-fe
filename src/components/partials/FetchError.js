@@ -11,7 +11,10 @@ const FetchError = (props) => {
         {error}
       </div>
       <p>Please, try again or check your connection.</p>
-      <button onClick={fetchFun} className="flex gap-3 px-5 py-3 rounded bg-sky-700 hover:bg-sky-600 text-base text-white">
+      <button
+        onClick={fetchFun}
+        className="flex gap-3 px-5 py-3 rounded bg-sky-700 hover:bg-sky-600 text-base text-white"
+      >
         <span>Retry</span>
         <Svg src="/icons/arrow-path-rounded-square.svg" className="w-6 h-6" />
       </button>
