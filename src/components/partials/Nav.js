@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 const Nav = () => {
   return (
     <nav>
@@ -6,12 +8,18 @@ const Nav = () => {
           (navlink, index) => {
             return (
               <li key={index}>
-                <a
-                  href={`/${navlink}`}
-                  className="capitalize font-medium outline-offset-4 hover:text-sky-700 hover:underline transition-colors duration-300"
+                <NavLink
+                  to={`/${navlink}`}
+                  className={({ isActive }) => {
+                    return `capitalize font-medium outline-offset-4 ${
+                      isActive
+                        ? "font-bold text-sky-700 hover:text-sky-900 underline"
+                        : "hover:text-sky-700 hover:underline"
+                    }`;
+                  }}
                 >
                   {navlink}
-                </a>
+                </NavLink>
               </li>
             );
           }
