@@ -7,8 +7,6 @@ import Chart from "chart.js/auto"; // must have, although not used
 import { Line } from "react-chartjs-2";
 import Svg from "../partials/Svg";
 
-import data from "../../data/bar_line.json";
-
 import Page from "../partials/Page";
 import Tag from "../partials/Tag";
 
@@ -90,24 +88,31 @@ const Measurement = () => {
             <div className="flex-1 flex flex-col gap-8">
               <h1>{measurement.name}</h1>
               <div className="grid lg:grid-cols-2 gap-4">
-                <div className="flex justify-center h-80">
-                  <Line
-                    data={{
-                      labels: data.x,
-                      datasets: [
-                        {
-                          type: "bar",
-                          label: "Measurement",
-                          data: data.y,
-                        },
-                        {
-                          label: "Reference",
-                          data: data.y,
-                        },
-                      ],
-                    }}
-                  />
-                </div>
+                {measurement.data_entry.map((de, index) => {
+                  return (
+                    de.data && (
+                      <div className="flex justify-center h-80">
+                        <Line
+                          key={index}
+                          data={{
+                            labels: de.data.x,
+                            datasets: [
+                              {
+                                type: "bar",
+                                label: "Measurement",
+                                data: de.data.y,
+                              },
+                              {
+                                label: "Reference",
+                                data: de.data.y,
+                              },
+                            ],
+                          }}
+                        />
+                      </div>
+                    )
+                  );
+                })}
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -124,14 +129,16 @@ const Measurement = () => {
                   <Svg src="/icons/command-line.svg" className="w-6 h-6" />
                   {measurement.directory}
                 </div>
-                <div className="flex gap-2 text-sm">
-                  <Svg src="/icons/beaker.svg" className="w-6 h-6" />
-                  <ul className="list-none flex flex-col">
-                    {measurement.radioisotopes.map((radioisotope, index) => (
-                      <li key={index}>{radioisotope.name}</li>
-                    ))}
-                  </ul>
-                </div>
+                {measurement.radioisotopes.length > 0 && (
+                  <div className="flex gap-2 text-sm">
+                    <Svg src="/icons/beaker.svg" className="w-6 h-6" />
+                    <ul className="list-none flex flex-col">
+                      {measurement.radioisotopes.map((radioisotope, index) => (
+                        <li key={index}>{radioisotope.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>
