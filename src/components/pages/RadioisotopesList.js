@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 import RadioisotopeCard from "../partials/RadioisotopeCard";
 
@@ -9,14 +10,40 @@ import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 
 const RadioisotopesList = () => {
+  const navigate = useNavigate();
+
+  const [currentUser, setCurrentUser] = useState({});
+
   const [radioisotopes, setRadioisotopes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchRadioisotopes = async () => {
+  const verifyToken = useCallback(
+    async (token) => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
+          { method: "GET" }
+        );
+        if (!response.ok) {
+          throw new Error("Token verifiation failed");
+        }
+        const data = await response.json();
+        setCurrentUser(data.payload.user);
+      } catch (error) {
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    },
+    [navigate]
+  );
+
+  const fetchRadioisotopes = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem("token");
     try {
+      await verifyToken(token);
       const response = await fetch(
         `${process.env.REACT_APP_API_SOURCE}/radioisotopes`
       );
@@ -30,14 +57,14 @@ const RadioisotopesList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [verifyToken]);
 
   useEffect(() => {
     fetchRadioisotopes();
-  }, []);
+  }, [fetchRadioisotopes]);
 
   return (
-    <Page>
+    <Page currentUser={currentUser}>
       <h1>Radioisotopes List</h1>
       {loading ? (
         <FetchLoading />
