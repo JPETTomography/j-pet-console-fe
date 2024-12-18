@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import Svg from "../partials/Svg";
@@ -10,17 +11,43 @@ import Page from "../partials/Page";
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 
-const Experiment = () => {
+const User = () => {
+  const navigate = useNavigate();
+
+  const [currentUser, setCurrentUser] = useState({});
+
   const { user_id } = useParams();
 
-  const [user, setExperiment] = useState({});
+  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const verifyToken = useCallback(
+    async (token) => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
+          { method: "GET" }
+        );
+        if (!response.ok) {
+          throw new Error("Token verifiation failed");
+        }
+        const data = await response.json();
+        setCurrentUser(data.payload.user);
+      } catch (error) {
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    },
+    [navigate]
+  );
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem("token");
     try {
+      await verifyToken(token);
       const response = await fetch(
         `${process.env.REACT_APP_API_SOURCE}/users/${user_id}`
       );
@@ -28,20 +55,20 @@ const Experiment = () => {
         throw new Error("Failed to fetch user");
       }
       const data = await response.json();
-      setExperiment(data);
+      setUser(data);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [user_id]);
+  }, [verifyToken, user_id]);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser, user_id]);
 
   return (
-    <Page>
+    <Page currentUser={currentUser}>
       <a
         href="/users"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
@@ -77,4 +104,4 @@ const Experiment = () => {
   );
 };
 
-export default Experiment;
+export default User;

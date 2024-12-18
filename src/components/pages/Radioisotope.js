@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import Svg from "../partials/Svg";
@@ -9,16 +10,42 @@ import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 
 const Radioisotope = () => {
+  const navigate = useNavigate();
+
+  const [currentUser, setCurrentUser] = useState({});
+
   const { radioisotope_id } = useParams();
 
   const [radioisotope, setRadioisotope] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const verifyToken = useCallback(
+    async (token) => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
+          { method: "GET" }
+        );
+        if (!response.ok) {
+          throw new Error("Token verifiation failed");
+        }
+        const data = await response.json();
+        setCurrentUser(data.payload.user);
+      } catch (error) {
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    },
+    [navigate]
+  );
+
   const fetchRadioisotope = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem("token");
     try {
+      await verifyToken(token);
       const response = await fetch(
         `${process.env.REACT_APP_API_SOURCE}/radioisotopes/${radioisotope_id}`
       );
@@ -32,14 +59,14 @@ const Radioisotope = () => {
     } finally {
       setLoading(false);
     }
-  }, [radioisotope_id]);
+  }, [verifyToken, radioisotope_id]);
 
   useEffect(() => {
     fetchRadioisotope();
   }, [fetchRadioisotope, radioisotope_id]);
 
   return (
-    <Page>
+    <Page currentUser={currentUser}>
       <a
         href="/radioisotopes"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
