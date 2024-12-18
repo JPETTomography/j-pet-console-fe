@@ -1,7 +1,7 @@
 import Svg from "./Svg";
 
 const RadioisotopeCard = (props) => {
-  const { id, name, description, activity, halftime } = props;
+  const { id, name, description, activity, halflife } = props;
 
   return (
     <a
@@ -23,7 +23,7 @@ const RadioisotopeCard = (props) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Svg src="/icons/clock.svg" className="w-6 h-6" />
-          {halftime}
+          {halflife}
         </div>
       </div>
     </a>

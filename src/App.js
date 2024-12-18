@@ -12,6 +12,7 @@ import Radioisotope from "./components/pages/Radioisotope";
 import NotFound from "./components/pages/NotFound";
 import UsersList from "./components/pages/UsersList";
 import User from "./components/pages/User";
+import Measurement from "./components/pages/Measurement";
 
 function App() {
   return (
@@ -20,6 +21,10 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/experiments" element={<ExperimentsList />} />
         <Route path="/experiments/:experiment_id" element={<Experiment />} />
+        <Route
+          path="/experiments/:experiment_id/measurements/:measurement_id"
+          element={<Measurement />}
+        />
         <Route path="/detectors" element={<DetectorsList />} />
         <Route path="/detectors/:detector_id" element={<Detector />} />
         <Route path="/tags" element={<TagsList />} />

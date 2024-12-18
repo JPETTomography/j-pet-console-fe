@@ -94,7 +94,7 @@ const Radioisotope = () => {
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Svg src="/icons/clock.svg" className="w-6 h-6" />
-                {radioisotope.halftime}
+                {radioisotope.halflife}
               </div>
             </div>
           </div>
