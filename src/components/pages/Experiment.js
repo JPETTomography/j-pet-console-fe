@@ -111,7 +111,7 @@ const Experiment = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Svg src="/icons/user-circle.svg" className="w-6 h-6" />
-                  {/* {experiment.coordinator.name} */} "coordinator"
+                  {experiment.coordinator.name}
                 </div>
               </div>
             </div>
