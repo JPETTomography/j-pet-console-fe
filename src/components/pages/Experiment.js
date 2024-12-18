@@ -4,18 +4,15 @@ import { useParams } from "react-router-dom";
 
 import { formatDate } from "../../utils/formatDate";
 
-// eslint-disable-next-line
-import Chart from "chart.js/auto"; // must have, although not used
-import { Line } from "react-chartjs-2";
 import Svg from "../partials/Svg";
 
-import data from "../../data/bar_line.json";
 import Badge from "../partials/Badge";
 
 import Page from "../partials/Page";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
+import MeasurementsList from "../partials/MeasurementsList";
 
 const Experiment = () => {
   const navigate = useNavigate();
@@ -88,50 +85,35 @@ const Experiment = () => {
         <FetchError error={error} fetchFun={fetchExperiment} />
       ) : (
         <>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center gap-4">
-              <h1>{experiment.name}</h1>
-              <div className="flex gap-4">
-                <Badge status={experiment.status} />
+          <div className="grid grid-cols-[1fr_400px] gap-8">
+            <MeasurementsList />
+            <div className="flex flex-col gap-6">
+              <div className="flex justify-between items-start gap-4">
+                <h2>{experiment.name}</h2>
+                <div className="flex gap-4">
+                  <Badge status={experiment.status} />
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between gap-4">
               <p className="text-xl">{experiment.description}</p>
-              <div className="shrink-0 flex items-center gap-2 mb-auto text-sm">
-                <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
-                <span>
-                  {formatDate(experiment.start_date)} -{" "}
-                  {experiment.end_date
-                    ? formatDate(experiment.end_date)
-                    : "..."}
-                </span>
+              <div className="flex flex-col gap-2">
+                <div className="shrink-0 flex items-center gap-2 mb-auto text-sm">
+                  <Svg src="/icons/calendar-days.svg" className="w-6 h-6" />
+                  <span>
+                    {formatDate(experiment.start_date)} -{" "}
+                    {experiment.end_date
+                      ? formatDate(experiment.end_date)
+                      : "..."}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
+                  {experiment.location}
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Svg src="/icons/user-circle.svg" className="w-6 h-6" />
+                  {/* {experiment.coordinator.name} */} "coordinator"
+                </div>
               </div>
-            </div>
-            <div className="grid grid-rows-1 grid-flow-col gap-4 pt-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Svg src="/icons/map-pin.svg" className="w-6 h-6" />
-                {experiment.location}
-              </div>
-            </div>
-          </div>
-          <div className="grid lg:grid-cols-2 gap-4">
-            <div className="flex justify-center h-80">
-              <Line
-                data={{
-                  labels: data.x,
-                  datasets: [
-                    {
-                      type: "bar",
-                      label: "Measurement",
-                      data: data.y,
-                    },
-                    {
-                      label: "Reference",
-                      data: data.y,
-                    },
-                  ],
-                }}
-              />
             </div>
           </div>
         </>
