@@ -1,6 +1,7 @@
 import usePasswordToggle from "../../utils/usePasswordToggle";
 
-const PasswordInput = () => {
+const PasswordInput = (props) => {
+  const { setPassword } = props;
   const [InputType, Icon] = usePasswordToggle();
 
   return (
@@ -16,6 +17,7 @@ const PasswordInput = () => {
           type={InputType}
           id="password"
           name="password"
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full p-4 pr-12 rounded border border-slate-300 group-hover/input:border-sky-700 focus:outline-sky-700 text-slate-800 transition-colors duration-300"
         />
         {Icon}
