@@ -108,6 +108,19 @@ const Measurement = () => {
                               },
                             ],
                           }}
+                          options={{
+                            plugins: {
+                              title: {
+                                color: "#1e293b",
+                                display: true,
+                                font: { size: 20 },
+                                padding: {
+                                  top: 10,
+                                },
+                                text: de.data.Title,
+                              },
+                            },
+                          }}
                         />
                       </div>
                     )
