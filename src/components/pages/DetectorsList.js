@@ -5,6 +5,7 @@ import DetectorCard from "../partials/DetectorCard";
 
 import Page from "../partials/Page";
 import PaginatedItems from "../partials/PaginatedItems";
+import ButtonNew from "../partials/ButtonNew";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -47,7 +48,13 @@ const DetectorsList = () => {
       ) : error ? (
         <FetchError error={error} fetchFun={fetchDetectors} />
       ) : (
-        <PaginatedItems items={detectors} ItemComponent={DetectorCard} />
+        <PaginatedItems
+          items={detectors}
+          ItemComponent={DetectorCard}
+          newButton={
+            <ButtonNew path="/detectors/new">Add new detector</ButtonNew>
+          }
+        />
       )}
     </Page>
   );
