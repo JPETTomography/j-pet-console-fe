@@ -11,7 +11,9 @@ import {
 } from "../../utils/measurements";
 import Tabs from "../partials/Tabs";
 import Tag from "../partials/Tag";
+import ButtonGroup from "../partials/ButtonGroup";
 import ButtonBack from "../partials/ButtonBack";
+import ButtonEdit from "../partials/ButtonEdit";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -95,6 +97,11 @@ const Measurement = () => {
                   </div>
                 )}
               </div>
+              <ButtonGroup>
+                <ButtonEdit
+                  path={`/experiments/${measurement.experiment_id}/measurements/${measurement.id}/edit`}
+                />
+              </ButtonGroup>
             </div>
           </div>
         </>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import MeasurementCard from "../partials/MeasurementCard";
 
 import PaginatedItems from "../partials/PaginatedItems";
+import ButtonNew from "../partials/ButtonNew";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
@@ -49,7 +50,15 @@ const MeasurementsList = () => {
       ) : error ? (
         <FetchError error={error} fetchFun={fetchMeasurements} />
       ) : (
-        <PaginatedItems items={measurements} ItemComponent={MeasurementCard} />
+        <PaginatedItems
+          items={measurements}
+          ItemComponent={MeasurementCard}
+          newButton={
+            <ButtonNew path={`/experiments/${experiment_id}/measurements/new`}>
+              Add new measurement
+            </ButtonNew>
+          }
+        />
       )}
     </div>
   );
