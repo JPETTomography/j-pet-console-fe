@@ -8,63 +8,39 @@ import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
+import api from "../../api";
 
 const ExperimentsList = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
 
   const [experiments, setExperiments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchExperiments = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
+
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/experiments`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch experiments");
-      }
-      const data = await response.json();
-      setExperiments(data);
+      const response = await api.get("/experiments");
+      setExperiments(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken]);
+  }, [navigate]);
 
   useEffect(() => {
     fetchExperiments();
   }, [fetchExperiments]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <h1>Experiments List</h1>
       {loading ? (
         <FetchLoading />

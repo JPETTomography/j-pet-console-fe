@@ -8,11 +8,10 @@ import Page from "../partials/Page";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
+import api from "../../api";
 
 const Radioisotope = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
 
   const { radioisotope_id } = useParams();
 
@@ -20,53 +19,34 @@ const Radioisotope = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchRadioisotope = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
+
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/radioisotopes/${radioisotope_id}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch radioisotope");
-      }
-      const data = await response.json();
-      setRadioisotope(data);
+      const response = await api.get(`/radioisotopes/${radioisotope_id}`);
+      setRadioisotope(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, radioisotope_id]);
+  }, [radioisotope_id, navigate]);
+
+  useEffect(() => {
+    fetchRadioisotope();
+  }, [fetchRadioisotope]);
 
   useEffect(() => {
     fetchRadioisotope();
   }, [fetchRadioisotope, radioisotope_id]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <a
         href="/radioisotopes"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"

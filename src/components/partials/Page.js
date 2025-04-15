@@ -1,7 +1,9 @@
 import Header from "./Header";
 
 const Page = (props) => {
-  const { currentUser, children } = props;
+  const { children } = props;
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
 
   return (
     <>

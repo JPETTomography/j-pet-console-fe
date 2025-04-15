@@ -14,11 +14,10 @@ import Tag from "../partials/Tag";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
+import api from "../../api";
 
 const Measurement = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
 
   const { measurement_id } = useParams();
 
@@ -27,53 +26,26 @@ const Measurement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchMeasurement = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
+
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/measurements/${measurement_id}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch measurement");
-      }
-      const data = await response.json();
-      setMeasurement(data);
+      const response = await api.get(`/measurements/${measurement_id}`);
+      setMeasurement(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, measurement_id]);
-
-  useEffect(() => {
-    fetchMeasurement();
-  }, [fetchMeasurement, measurement_id]);
+  }, [measurement_id, navigate]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <a
         href={`/experiments/${measurement.experiment_id}`}
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
