@@ -13,11 +13,10 @@ import Page from "../partials/Page";
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 import MeasurementsList from "../partials/MeasurementsList";
+import api from "../../api";
 
 const Experiment = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
 
   const { experiment_id } = useParams();
 
@@ -25,53 +24,30 @@ const Experiment = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchExperiment = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
+
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/experiments/${experiment_id}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch experiment");
-      }
-      const data = await response.json();
-      setExperiment(data);
+      const response = await api.get(`/experiments/${experiment_id}`);
+      setExperiment(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, experiment_id]);
+  }, [experiment_id, navigate]);
 
   useEffect(() => {
     fetchExperiment();
   }, [fetchExperiment, experiment_id]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <a
         href="/experiments"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"

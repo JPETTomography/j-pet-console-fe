@@ -47,6 +47,7 @@ const Login = () => {
       } else {
         const data = await response.json();
         localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         setLoading(false);
         navigate("/experiments");
       }

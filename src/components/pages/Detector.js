@@ -11,10 +11,10 @@ import Page from "../partials/Page";
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 
+import api from "../../api";
+
 const Detector = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
 
   const { detector_id } = useParams();
 
@@ -22,53 +22,29 @@ const Detector = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchDetector = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/detectors/${detector_id}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch detector");
-      }
-      const data = await response.json();
-      setDetector(data);
+      const response = await api.get(`/detectors/${detector_id}`);
+      setDetector(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, detector_id]);
+  }, [detector_id]);
 
   useEffect(() => {
     fetchDetector();
   }, [fetchDetector, detector_id]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <a
         href="/detectors"
         className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"

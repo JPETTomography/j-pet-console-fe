@@ -8,61 +8,39 @@ import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
+import api from "../../api";
 
 const UsersList = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
     try {
-      await verifyToken(token);
-      const response = await fetch(`${process.env.REACT_APP_API_SOURCE}/users`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const data = await response.json();
-      setUsers(data);
+      const response = await api.get("/users");
+      setUsers(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken]);
+  }, [navigate]);
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <h1>Users List</h1>
       {loading ? (
         <FetchLoading />
