@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useCallback } from "react";
+import { React, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
@@ -44,6 +44,10 @@ const Measurement = () => {
     }
   }, [measurement_id, navigate]);
 
+  useEffect(() => {
+    fetchMeasurement();
+  }, [fetchMeasurement]);
+
   return (
     <Page>
       <a
@@ -67,7 +71,7 @@ const Measurement = () => {
                 active={context}
                 changeContext={setContext}
               />
-              {measurementContextContent(context, measurement)}
+              {measurementContextContent(context, measurement, setMeasurement)}
             </div>
             <div className="flex flex-col gap-6">
               <ul className="list-none empty:hidden flex flex-wrap gap-4">
