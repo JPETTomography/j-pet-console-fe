@@ -9,6 +9,8 @@ import ButtonNew from "../partials/ButtonNew";
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 
+import api from "../../api";
+
 const MeasurementsList = () => {
   const { experiment_id } = useParams();
 
@@ -20,16 +22,12 @@ const MeasurementsList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/experiments/${experiment_id}/measurements`
+      const response = await api.get(
+        `/experiments/${experiment_id}/measurements`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch measurements");
-      }
-      const data = await response.json();
-      setMeasurements(data);
+      setMeasurements(response.data);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.detail || err.message);
     } finally {
       setLoading(false);
     }

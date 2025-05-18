@@ -9,6 +9,8 @@ import InputText from "./Input/InputText";
 import InputSelect from "./Input/InputSelect";
 import InputPassword from "./Input/InputPassword";
 
+import api from "../../api"; // Import the pre-configured API instance
+
 // TODO: validate selects values
 // const roleValues = ["", "shifter", "coordinator", "admin"];
 
@@ -39,7 +41,7 @@ const UserForm = (props) => {
   };
 
   const validateForm = () => {
-    var anyError = false;
+    let anyError = false;
 
     if (!name) {
       setNameError("Name cannot be blank.");
@@ -74,33 +76,34 @@ const UserForm = (props) => {
     if (!validateForm()) return;
     setLoading(true);
 
-    const formDetails = new URLSearchParams();
-    formDetails.append("name", name);
-    formDetails.append("email", email);
-    if (!user) formDetails.append("password", password);
-    formDetails.append("role", role);
-    formDetails.append("token", localStorage.getItem("token"));
+    const formDetails = {
+      name,
+      email,
+      role,
+    };
+    if (!user) formDetails.password = password;
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/users/${
-          user ? `${user.id}/edit` : "new"
-        }`,
-        {
-          method: user ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formDetails,
-        }
-      );
+      const endpoint = user ? `/users/${user.id}/edit` : "/users/new";
+      const method = user ? "patch" : "post";
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.detail || "Authentication failed!");
+      const response = await api[method](endpoint, formDetails);
+
+      if (response.status !== 200) {
+        setError(response.data.detail || "An error occurred!");
       } else {
         navigate(user ? `/users/${user.id}` : "/users");
       }
     } catch (err) {
-      setError(err.message);
+      const errorDetail = err.response?.data?.detail;
+      if (Array.isArray(errorDetail)) {
+        const formattedErrors = errorDetail
+          .map((item) => item.msg + ": " + item.loc[1] + ".")
+          .join("\n");
+        setError(formattedErrors);
+      } else {
+        setError(err.message || "An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }

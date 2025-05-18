@@ -47,6 +47,10 @@ const Measurement = () => {
     }
   }, [measurement_id, navigate]);
 
+  useEffect(() => {
+    fetchMeasurement();
+  }, [fetchMeasurement, measurement_id]);
+
   return (
     <Page>
       <ButtonBack path={`/experiments/${measurement.experiment_id}`}>

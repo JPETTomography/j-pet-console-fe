@@ -8,6 +8,8 @@ import ErrorCard from "./ErrorCard";
 import InputText from "./Input/InputText";
 import InputNumber from "./Input/InputNumber";
 
+import api from "../../api";
+
 const RadioisotopeForm = (props) => {
   const { radioisotope } = props;
 
@@ -18,7 +20,7 @@ const RadioisotopeForm = (props) => {
   const [activity, setActivity] = useState(
     radioisotope ? radioisotope.activity : ""
   );
-  const [halflife, setHelflife] = useState(
+  const [halflife, setHalflife] = useState(
     radioisotope ? radioisotope.halflife : ""
   );
 
@@ -41,7 +43,7 @@ const RadioisotopeForm = (props) => {
   };
 
   const validateForm = () => {
-    var anyError = false;
+    let anyError = false;
 
     if (!name) {
       setNameError("Name cannot be blank.");
@@ -75,35 +77,38 @@ const RadioisotopeForm = (props) => {
     if (!validateForm()) return;
     setLoading(true);
 
-    const formDetails = new URLSearchParams();
-    formDetails.append("name", name);
-    formDetails.append("description", description);
-    formDetails.append("activity", activity);
-    formDetails.append("halflife", halflife);
-    formDetails.append("token", localStorage.getItem("token"));
+    const formDetails = {
+      name,
+      description,
+      activity,
+      halflife,
+    };
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/radioisotopes/${
-          radioisotope ? `${radioisotope.id}/edit` : "new"
-        }`,
-        {
-          method: radioisotope ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formDetails,
-        }
-      );
+      const endpoint = radioisotope
+        ? `/radioisotopes/${radioisotope.id}/edit`
+        : "/radioisotopes/new";
+      const method = radioisotope ? "patch" : "post";
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.detail || "Authentication failed!");
+      const response = await api[method](endpoint, formDetails);
+
+      if (response.status !== 200) {
+        setError(response.data.detail || "An error occurred!");
       } else {
         navigate(
           radioisotope ? `/radioisotopes/${radioisotope.id}` : "/radioisotopes"
         );
       }
     } catch (err) {
-      setError(err.message);
+      const errorDetail = err.response?.data?.detail;
+      if (Array.isArray(errorDetail)) {
+        const formattedErrors = errorDetail
+          .map((item) => item.msg + ": " + item.loc[1] + ".")
+          .join("\n");
+        setError(formattedErrors);
+      } else {
+        setError(err.message || "An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }
@@ -136,7 +141,7 @@ const RadioisotopeForm = (props) => {
       <InputNumber
         name="halflife"
         value={halflife}
-        setValue={setHelflife}
+        setValue={setHalflife}
         error={halflifeError}
         required
       />
