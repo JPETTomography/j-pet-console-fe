@@ -8,6 +8,8 @@ import ErrorCard from "./ErrorCard";
 import InputText from "./Input/InputText";
 import Tag from "./Tag";
 
+import api from "../../api";
+
 const TagForm = (props) => {
   const { tag } = props;
 
@@ -32,7 +34,7 @@ const TagForm = (props) => {
   };
 
   const validateForm = () => {
-    var anyError = false;
+    let anyError = false;
 
     if (!name) {
       setNameError("Name cannot be blank.");
@@ -61,32 +63,33 @@ const TagForm = (props) => {
     if (!validateForm()) return;
     setLoading(true);
 
-    const formDetails = new URLSearchParams();
-    formDetails.append("name", name);
-    formDetails.append("description", description);
-    formDetails.append("color", color);
-    formDetails.append("token", localStorage.getItem("token"));
+    const formDetails = {
+      name,
+      description,
+      color,
+    };
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/tags/${
-          tag ? `${tag.id}/edit` : "new"
-        }`,
-        {
-          method: tag ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formDetails,
-        }
-      );
+      const endpoint = tag ? `/tags/${tag.id}/edit` : "/tags/new";
+      const method = tag ? "patch" : "post";
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.detail || "Authentication failed!");
+      const response = await api[method](endpoint, formDetails);
+
+      if (response.status !== 200) {
+        setError(response.data.detail || "An error occurred!");
       } else {
         navigate(tag ? `/tags/${tag.id}` : "/tags");
       }
     } catch (err) {
-      setError(err.message);
+      const errorDetail = err.response?.data?.detail;
+      if (Array.isArray(errorDetail)) {
+        const formattedErrors = errorDetail
+          .map((item) => item.msg + ": " + item.loc[1] + ".")
+          .join("\n");
+        setError(formattedErrors);
+      } else {
+        setError(err.message || "An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }

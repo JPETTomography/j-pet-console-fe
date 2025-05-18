@@ -41,10 +41,6 @@ const Radioisotope = () => {
 
   useEffect(() => {
     fetchRadioisotope();
-  }, [fetchRadioisotope]);
-
-  useEffect(() => {
-    fetchRadioisotope();
   }, [fetchRadioisotope, radioisotope_id]);
 
   return (

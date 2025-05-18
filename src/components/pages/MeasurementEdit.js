@@ -9,64 +9,39 @@ import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 import MeasurementForm from "../partials/MeasurementForm";
 
+import api from "../../api";
+
 const MeasurementEdit = () => {
   const navigate = useNavigate();
-
-  const [currentUser, setCurrentUser] = useState({});
-
   const { measurement_id } = useParams();
 
   const [measurement, setMeasurement] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-        const data = await response.json();
-        setCurrentUser(data.payload.user);
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchMeasurement = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/measurements/${measurement_id}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch measurement");
-      }
-      const data = await response.json();
-      setMeasurement(data);
+      const response = await api.get(`/measurements/${measurement_id}`);
+      setMeasurement(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response?.status === 401) {
+        navigate("/");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, measurement_id]);
+  }, [measurement_id]);
 
   useEffect(() => {
     fetchMeasurement();
-  }, [fetchMeasurement, measurement_id]);
+  }, [fetchMeasurement]);
 
   return (
-    <Page currentUser={currentUser}>
+    <Page>
       <ButtonBack path={`/experiments/${measurement.experiment_id}`}>
         Back to the experiment
       </ButtonBack>

@@ -49,7 +49,7 @@ const Measurement = () => {
 
   useEffect(() => {
     fetchMeasurement();
-  }, [fetchMeasurement]);
+  }, [fetchMeasurement, measurement_id]);
 
   return (
     <Page>

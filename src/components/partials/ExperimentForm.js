@@ -9,8 +9,7 @@ import InputText from "./Input/InputText";
 import InputSelect from "./Input/InputSelect";
 import InputDate from "./Input/InputDate";
 
-// TODO: validate selects values
-// const statusValues = ["draft", "ongoing", "closed", "archived"];
+import api from "../../api";
 
 const ExperimentForm = (props) => {
   const { experiment } = props;
@@ -53,67 +52,35 @@ const ExperimentForm = (props) => {
 
   const navigate = useNavigate();
 
-  const verifyToken = useCallback(
-    async (token) => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_SOURCE}/verify-token/${token}`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error("Token verifiation failed");
-        }
-      } catch (error) {
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    },
-    [navigate]
-  );
-
   const fetchCoordinators = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/users?role=coordinator`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch coordinators");
-      }
-      const data = await response.json();
+      const response = await api.get("/users?role=coordinator");
+      const data = response.data;
       if (!experiment) data.unshift({ id: "", name: "-" });
       setCoordinators(data);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.detail || err.message);
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, experiment]);
+  }, [experiment]);
 
   const fetchDetectors = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token");
     try {
-      await verifyToken(token);
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/detectors`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch detectors");
-      }
-      const data = await response.json();
+      const response = await api.get("/detectors");
+      const data = response.data;
       if (!experiment) data.unshift({ id: "", name: "-" });
       setDetectors(data);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.detail || err.message);
     } finally {
       setLoading(false);
     }
-  }, [verifyToken, experiment]);
+  }, [experiment]);
 
   useEffect(() => {
     fetchCoordinators();
@@ -133,7 +100,7 @@ const ExperimentForm = (props) => {
   };
 
   const validateForm = () => {
-    var anyError = false;
+    let anyError = false;
 
     if (!name) {
       setNameError("Name cannot be blank.");
@@ -149,11 +116,6 @@ const ExperimentForm = (props) => {
       setStatusError("Status cannot be blank.");
       anyError = true;
     }
-    // TODO: validate selects values
-    // if (!statusValues.includes(status)) {
-    //   setStatusError("Status cannot be other than the defined ones.");
-    //   anyError = true;
-    // }
 
     if (!location) {
       setLocationError("Location cannot be blank.");
@@ -192,37 +154,40 @@ const ExperimentForm = (props) => {
     if (!validateForm()) return;
     setLoading(true);
 
-    const formDetails = new URLSearchParams();
-    formDetails.append("name", name);
-    formDetails.append("description", description);
-    formDetails.append("status", status);
-    formDetails.append("location", location);
-    formDetails.append("start_date", startDate);
-    formDetails.append("end_date", endDate);
-    formDetails.append("coordinator_id", coordinatorId);
-    formDetails.append("detector_id", detectorId);
-    formDetails.append("token", localStorage.getItem("token"));
+    const formDetails = {
+      name,
+      description,
+      status,
+      location,
+      start_date: startDate,
+      end_date: endDate,
+      coordinator_id: coordinatorId,
+      detector_id: detectorId,
+    };
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_SOURCE}/experiments/${
-          experiment ? `${experiment.id}/edit` : "new"
-        }`,
-        {
-          method: experiment ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formDetails,
-        }
-      );
+      const endpoint = experiment
+        ? `/experiments/${experiment.id}/edit`
+        : "/experiments/new";
+      const method = experiment ? "patch" : "post";
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.detail || "Authentication failed!");
+      const response = await api[method](endpoint, formDetails);
+
+      if (response.status !== 200) {
+        setError(response.data.detail || "An error occurred!");
       } else {
         navigate(experiment ? `/experiments/${experiment.id}` : "/experiments");
       }
     } catch (err) {
-      setError(err.message);
+      const errorDetail = err.response?.data?.detail;
+      if (Array.isArray(errorDetail)) {
+        const formattedErrors = errorDetail
+          .map((item) => item.msg + ": " + item.loc[1] + ".")
+          .join("\n");
+        setError(formattedErrors);
+      } else {
+        setError(err.message || "An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }
