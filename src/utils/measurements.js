@@ -26,8 +26,8 @@ export const measurementTabs = [
   },
 ];
 
-export const measurementContextContent = (context, measurement, setMeasurement) => {
+export const measurementContextContent = (context, measurement) => {
   const Content = contentMap[context];
 
-  return <Content measurement={measurement} setMeasurement={setMeasurement} />;
+  return <Content measurement={measurement} />;
 };

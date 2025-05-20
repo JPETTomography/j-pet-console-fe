@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 import MeasurementCard from "../partials/MeasurementCard";
 
@@ -8,11 +7,9 @@ import PaginatedItems from "../partials/PaginatedItems";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
-import api from "../../api";
 
 const MeasurementsList = () => {
   const { experiment_id } = useParams();
-  const navigate = useNavigate();
 
   const [measurements, setMeasurements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,20 +19,20 @@ const MeasurementsList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(
-        `/experiments/${experiment_id}/measurements`
+      const response = await fetch(
+        `${process.env.REACT_APP_API_SOURCE}/experiments/${experiment_id}/measurements`
       );
-      setMeasurements(response.data);
-    } catch (err) {
-      if (err.response?.status === 401) {
-        navigate("/");
-      } else {
-        setError(err.message);
+      if (!response.ok) {
+        throw new Error("Failed to fetch measurements");
       }
+      const data = await response.json();
+      setMeasurements(data);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [experiment_id, navigate]);
+  }, [experiment_id]);
 
   useEffect(() => {
     fetchMeasurements();
