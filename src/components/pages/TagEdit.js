@@ -1,28 +1,30 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import TagCard from "../partials/TagCard";
 import Page from "../partials/Page";
-import PaginatedItems from "../partials/PaginatedItems";
-import ButtonNew from "../partials/ButtonNew";
+import ButtonBack from "../partials/ButtonBack";
 
 import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
+import TagForm from "../partials/TagForm";
+
 import api from "../../api";
 
-const TagsList = () => {
+const TagEdit = () => {
   const navigate = useNavigate();
+  const { tag_id } = useParams();
 
-  const [tags, setTags] = useState([]);
+  const [tag, setTag] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchTags = useCallback(async () => {
+  const fetchTag = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get("/tags");
-      setTags(response.data);
+      const response = await api.get(`/tags/${tag_id}`);
+      setTag(response.data);
     } catch (err) {
       if (err.response?.status === 401) {
         navigate("/");
@@ -32,28 +34,27 @@ const TagsList = () => {
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, [tag_id, navigate]);
 
   useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
+    fetchTag();
+  }, [fetchTag]);
 
   return (
     <Page>
-      <h1>Tags List</h1>
+      <ButtonBack path={`/tags/${tag.id}`}>Back to the tag</ButtonBack>
       {loading ? (
         <FetchLoading />
       ) : error ? (
-        <FetchError error={error} fetchFun={fetchTags} />
+        <FetchError error={error} fetchFun={fetchTag} />
       ) : (
-        <PaginatedItems
-          items={tags}
-          ItemComponent={TagCard}
-          newButton={<ButtonNew path="/tags/new">Add new tag</ButtonNew>}
-        />
+        <>
+          <h1>Edit tag - {tag.name}</h1>
+          <TagForm tag={tag} />
+        </>
       )}
     </Page>
   );
 };
 
-export default TagsList;
+export default TagEdit;

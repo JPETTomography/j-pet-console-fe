@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import Svg from "../partials/Svg";
 
 import Badge from "../partials/Badge";
+import ButtonBack from "../partials/ButtonBack";
+import ButtonEdit from "../partials/ButtonEdit";
 
 import Page from "../partials/Page";
 
@@ -36,7 +38,7 @@ const User = () => {
     } finally {
       setLoading(false);
     }
-  }, [user_id]);
+  }, [user_id, navigate]);
 
   useEffect(() => {
     fetchUser();
@@ -44,13 +46,7 @@ const User = () => {
 
   return (
     <Page>
-      <a
-        href="/users"
-        className="flex items-center gap-2 max-w-max font-semibold	text-sky-700 hover:text-sky-900 hover:underline transition-colors duration-300"
-      >
-        <Svg src="/icons/arrow-left.svg" className="w-5 h-5" />
-        <span>Back to users list</span>
-      </a>
+      <ButtonBack path="/users">Back to users list</ButtonBack>
       {loading ? (
         <FetchLoading />
       ) : error ? (
@@ -71,6 +67,7 @@ const User = () => {
                 <Svg src="/icons/at-symbol.svg" className="w-6 h-6" />
                 {user.email}
               </div>
+              <ButtonEdit path={`/users/${user.id}/edit`} />
             </div>
           </div>
         </>
