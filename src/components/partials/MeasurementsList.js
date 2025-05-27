@@ -11,8 +11,6 @@ import FetchLoading from "../partials/FetchLoading";
 import FetchError from "../partials/FetchError";
 import api from "../../api";
 
-import api from "../../api";
-
 const MeasurementsList = () => {
   const { experiment_id } = useParams();
   const navigate = useNavigate();

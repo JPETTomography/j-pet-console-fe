@@ -38,7 +38,7 @@ const User = () => {
     } finally {
       setLoading(false);
     }
-  }, [user_id]);
+  }, [user_id, navigate]);
 
   useEffect(() => {
     fetchUser();

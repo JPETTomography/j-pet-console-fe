@@ -34,7 +34,7 @@ const DetectorEdit = () => {
     } finally {
       setLoading(false);
     }
-  }, [detector_id]);
+  }, [detector_id, navigate]);
 
   useEffect(() => {
     fetchDetector();

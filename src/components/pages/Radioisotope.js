@@ -41,7 +41,7 @@ const Radioisotope = () => {
 
   useEffect(() => {
     fetchRadioisotope();
-  }, [fetchRadioisotope, radioisotope_id]);
+  }, [fetchRadioisotope, radioisotope_id, navigate]);
 
   return (
     <Page>

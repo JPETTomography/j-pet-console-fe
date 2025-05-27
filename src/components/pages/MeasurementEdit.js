@@ -34,7 +34,7 @@ const MeasurementEdit = () => {
     } finally {
       setLoading(false);
     }
-  }, [measurement_id]);
+  }, [measurement_id, navigate]);
 
   useEffect(() => {
     fetchMeasurement();
