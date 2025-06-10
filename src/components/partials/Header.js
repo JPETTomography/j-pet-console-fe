@@ -8,7 +8,7 @@ const Header = (props) => {
   return (
     <header className="flex justify-between items-center gap-4 h-14 px-6 py-2 border-b">
       <HomepageButton />
-      <Nav currentUserRole={currentUser.role} />
+      <Nav currentUserRole={currentUser?.role} />
       <CurrentUser currentUser={currentUser} />
     </header>
   );

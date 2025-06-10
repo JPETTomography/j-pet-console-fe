@@ -19,8 +19,8 @@ const CurrentUser = (props) => {
       className="flex items-center gap-2 outline-offset-4"
     >
       <div className="flex flex-col items-end">
-        <span className="font-semibold">{currentUser.name}</span>
-        <span className="text-sm text-slate-600">{currentUser.email}</span>
+        <span className="font-semibold">{currentUser?.name}</span>
+        <span className="text-sm text-slate-600">{currentUser?.email}</span>
       </div>
       <Svg src="/icons/chevron-down.svg" className="w-6 h-6 text-slate-400" />
     </button>
