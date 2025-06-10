@@ -6,7 +6,7 @@ import "./drag-drop.css";
 const MAX_SIZE_MB = 5;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-const BE_URL = process.env.REACT_APP_API_SOURCE || "http://localhost:8000";
+const BE_URL = process.env.REACT_APP_API_SOURCE;
 
 const DragAndDrop = ({
   onFilesSelected,
@@ -20,10 +20,6 @@ const DragAndDrop = ({
   useEffect(() => {
     onFilesSelected(files);
   }, [files, onFilesSelected]);
-
-  useEffect(() => {
-    setFiles([]);
-  }, [existingPictures]);
 
   const isValidFile = (file) => {
     return (
