@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
 import Comment from "./Comment";
+import DragAndDrop from "./DragAndDrop";
 import SimpleMDE from "react-simplemde-editor";
 import { marked } from "marked";
 import "easymde/dist/easymde.min.css";
+
 const MeasurementComments = ({ measurement, setMeasurement }) => {
   const [loading, setLoading] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editorValue, setEditorValue] = useState("");
   const [hasContent, setHasContent] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [existingPictures, setExistingPictures] = useState([]);
+  const [deletedPictureIds, setDeletedPictureIds] = useState([]);
+  const [dragAndDropKey, setDragAndDropKey] = useState(0);
 
   useEffect(() => {
     if (editingCommentId) {
@@ -16,15 +22,27 @@ const MeasurementComments = ({ measurement, setMeasurement }) => {
         (c) => c.id === editingCommentId
       );
       if (comment) {
-        console.log("Editing comment:", comment);
         setEditorValue(comment.content || "");
         setHasContent(Boolean((comment.content || "").trim() !== ""));
+        setFiles([]);
+        setExistingPictures(comment.pictures || []);
+        setDeletedPictureIds([]);
+        setDragAndDropKey((prev) => prev + 1);
       }
     } else {
       setEditorValue("");
       setHasContent(false);
+      setFiles([]);
+      setExistingPictures([]);
+      setDeletedPictureIds([]);
+      setDragAndDropKey((prev) => prev + 1);
     }
   }, [editingCommentId, measurement.comments]);
+
+  const handleRemoveExistingPicture = (pic) => {
+    setExistingPictures((prev) => prev.filter((p) => !p.id || p.id !== pic.id));
+    setDeletedPictureIds((prev) => [...prev, pic.id]);
+  };
 
   const onAddOrEditComment = async () => {
     if (!editorValue || editorValue.trim() === "") return;
@@ -33,9 +51,24 @@ const MeasurementComments = ({ measurement, setMeasurement }) => {
       const path = editingCommentId
         ? `/measurements/${measurement.id}/comments/${editingCommentId}`
         : `/measurements/${measurement.id}/comments`;
-      const response = await api[editingCommentId ? "patch" : "post"](path, {
-        content: editorValue,
+
+      const formData = new FormData();
+      formData.append("content", editorValue);
+      files.forEach((file) => {
+        formData.append("files", file);
       });
+      if (editingCommentId && deletedPictureIds.length > 0) {
+        deletedPictureIds.forEach((id) =>
+          formData.append("deleted_picture_ids", id)
+        );
+      }
+
+      const response = await api[editingCommentId ? "patch" : "post"](path, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       const updatedComment = response.data.comment;
       setMeasurement((prev) => ({
         ...prev,
@@ -46,6 +79,10 @@ const MeasurementComments = ({ measurement, setMeasurement }) => {
           : [...prev.comments, updatedComment],
       }));
       setEditingCommentId(null);
+      setFiles([]);
+      setExistingPictures([]);
+      setDeletedPictureIds([]);
+      setDragAndDropKey((prev) => prev + 1);
     } catch (error) {
       console.error("Error adding/editing comment:", error);
     } finally {
@@ -80,6 +117,10 @@ const MeasurementComments = ({ measurement, setMeasurement }) => {
     setEditingCommentId(null);
     setEditorValue("");
     setHasContent(false);
+    setFiles([]);
+    setExistingPictures([]);
+    setDeletedPictureIds([]);
+    setDragAndDropKey((prev) => prev + 1);
   };
 
   return (
@@ -118,12 +159,13 @@ const MeasurementComments = ({ measurement, setMeasurement }) => {
               : "Add a comment...",
             status: false,
             autofocus: true,
-            previewRender: (plainText) => marked(plainText, {
-              gfm: true,
-              breaks: true,
-              smartLists: true,
-              smartypants: true,
-            }),
+            previewRender: (plainText) =>
+              marked(plainText, {
+                gfm: true,
+                breaks: true,
+                smartLists: true,
+                smartypants: true,
+              }),
             toolbar: [
               "bold",
               "italic",
@@ -140,6 +182,13 @@ const MeasurementComments = ({ measurement, setMeasurement }) => {
               "guide",
             ],
           }}
+        />
+        <p>Drop file here or browse</p>
+        <DragAndDrop
+          key={dragAndDropKey}
+          onFilesSelected={setFiles}
+          existingPictures={existingPictures}
+          onRemoveExistingPicture={handleRemoveExistingPicture}
         />
         <div className="flex items-center gap-4 mt-4">
           {editingCommentId && (
